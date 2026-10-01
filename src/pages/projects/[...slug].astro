@@ -1,0 +1,61 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import ProseLayout from '../../layouts/ProseLayout.astro';
+import { getPublished, readingMinutes } from '../../lib/content';
+
+export async function getStaticPaths() {
+  const projects = await getPublished('projects');
+  return projects.map((project) => ({ params: { slug: project.id }, props: { project } }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+const { data } = project;
+---
+
+<ProseLayout
+  title={data.title}
+  description={data.description}
+  date={data.date}
+  updated={data.updated}
+  minutes={readingMinutes(project.body)}
+  section={{ label: 'Projects', href: '/projects' }}
+  aside={data.stack.length > 0 ? { label: data.stack.join(', ') } : undefined}
+  tags={data.tags}
+  transitionName={`projects-${project.id}`}
+>
+  <Fragment slot="before">
+    {
+      data.cover && (
+        <div class="cover" transition:name={`project-cover-${project.id}`}>
+          <Image src={data.cover} alt={data.coverAlt ?? ''} widths={[800, 1400]} sizes="(max-width: 48rem) 100vw, 68ch" />
+        </div>
+      )
+    }
+    {
+      (data.links.live || data.links.source) && (
+        <p class="links">
+          {data.links.live && <a href={data.links.live}>Visit the live site</a>}
+          {data.links.source && <a href={data.links.source}>Read the source</a>}
+        </p>
+      )
+    }
+  </Fragment>
+  <Content />
+</ProseLayout>
+
+<style>
+  .cover {
+    margin-block-end: var(--space-5);
+    overflow: hidden;
+    border-radius: 6px;
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-block-end: var(--space-5);
+  }
+</style>

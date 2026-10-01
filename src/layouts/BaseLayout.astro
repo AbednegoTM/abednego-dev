@@ -1,0 +1,102 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import Nav from '../components/Nav.astro';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const siteName = 'Abednego Mwanza';
+const {
+  title,
+  description = 'Software engineer writing about code, systems, and the things on my mind.',
+} = Astro.props;
+const pageTitle = title ? `${title} | ${siteName}` : siteName;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+
+    <script is:inline>
+      // Runs before paint (and after each client-side navigation) so the theme never flashes.
+      (function () {
+        function apply() {
+          var stored = null;
+          try {
+            stored = localStorage.getItem('theme');
+          } catch (e) {}
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light';
+          document.documentElement.dataset.theme = theme;
+        }
+        apply();
+        document.addEventListener('astro:after-swap', apply);
+      })();
+    </script>
+
+    <ClientRouter />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Nav />
+    <main id="main">
+      <slot />
+    </main>
+    <footer class="site-footer wrap">
+      <p>
+        <a href="/now">Now</a>
+        <a href="/uses">Uses</a>
+        <a href="/cv">CV</a>
+        <a href="/rss.xml">RSS</a>
+      </p>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    inset-inline-start: var(--space-3);
+    inset-block-start: -10rem;
+    padding: var(--space-2) var(--space-3);
+    background: var(--text);
+    color: var(--bg);
+    z-index: 10;
+  }
+
+  .skip-link:focus {
+    inset-block-start: var(--space-3);
+  }
+
+  .site-footer {
+    padding-block: var(--space-6) var(--space-5);
+    color: var(--text-muted);
+  }
+
+  .site-footer p {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    padding-block-start: var(--space-4);
+    border-block-start: 1px solid var(--line);
+  }
+</style>

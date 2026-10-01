@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import EntryList from '../../components/EntryList.astro';
+import { getPublished } from '../../lib/content';
+
+const items = await getPublished('notes');
+const entries = items.map(({ id, data }) => ({
+  href: `/notes/${id}`,
+  title: data.title,
+  description: data.description,
+  date: data.date,
+  transitionName: `notes-${id}`,
+  draft: data.draft,
+}));
+---
+
+<BaseLayout title="Notes" description="Short notes and things I learned, written down before I forget them.">
+  <div class="wrap">
+    <PageHeader title="Notes" intro="Short notes and things I learned, written down before I forget them." />
+    <EntryList entries={entries} empty="No notes yet." />
+  </div>
+</BaseLayout>

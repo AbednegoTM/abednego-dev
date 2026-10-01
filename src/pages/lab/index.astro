@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import EntryList from '../../components/EntryList.astro';
+import { getPublished } from '../../lib/content';
+
+const items = await getPublished('lab');
+const entries = items.map(({ id, data }) => ({
+  href: `/lab/${id}`,
+  title: data.title,
+  description: data.description,
+  date: data.date,
+  transitionName: `lab-${id}`,
+  draft: data.draft,
+}));
+---
+
+<BaseLayout title="Lab" description="Small interactive experiments: animation, graphics, and ideas I wanted to try.">
+  <div class="wrap">
+    <PageHeader title="Lab" intro="Small interactive experiments: animation, graphics, and ideas I wanted to try." />
+    <EntryList entries={entries} empty="No experiments yet." />
+  </div>
+</BaseLayout>

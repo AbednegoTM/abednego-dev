@@ -1,0 +1,62 @@
+<button class="theme-toggle" type="button" aria-label="Switch to dark theme" data-theme-toggle>
+  <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+    <!-- Half-filled circle: reads as light/dark without a sun/moon cliché -->
+    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.5"></circle>
+    <path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"></path>
+  </svg>
+</button>
+
+<style>
+  .theme-toggle {
+    display: grid;
+    place-items: center;
+    inline-size: 2.5rem;
+    block-size: 2.5rem;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--text);
+    cursor: pointer;
+  }
+
+  .theme-toggle:hover {
+    color: var(--accent);
+  }
+
+  .theme-toggle svg {
+    transition: rotate 400ms var(--ease-out);
+  }
+
+  :global([data-theme='dark']) .theme-toggle svg {
+    rotate: 180deg;
+  }
+</style>
+
+<script>
+  function currentTheme(): 'light' | 'dark' {
+    return document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+  }
+
+  function syncLabel(button: HTMLButtonElement) {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    button.setAttribute('aria-label', `Switch to ${next} theme`);
+  }
+
+  function setup() {
+    const button = document.querySelector<HTMLButtonElement>('[data-theme-toggle]');
+    if (!button) return;
+    syncLabel(button);
+    button.addEventListener('click', () => {
+      const next = currentTheme() === 'dark' ? 'light' : 'dark';
+      document.documentElement.dataset.theme = next;
+      try {
+        localStorage.setItem('theme', next);
+      } catch {
+        // Storage unavailable (private mode): the choice lasts for this page only.
+      }
+      syncLabel(button);
+    });
+  }
+
+  document.addEventListener('astro:page-load', setup);
+</script>

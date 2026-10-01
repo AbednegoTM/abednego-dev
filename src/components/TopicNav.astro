@@ -1,0 +1,49 @@
+---
+import { TOPICS, type Topic } from '../lib/topics';
+
+interface Props {
+  current?: Topic;
+}
+
+const { current } = Astro.props;
+---
+
+<nav class="topics" aria-label="Topics">
+  <a href="/writing" aria-current={current ? undefined : 'page'}>All</a>
+  {
+    Object.entries(TOPICS).map(([slug, label]) => (
+      <a href={`/writing/topics/${slug}`} aria-current={current === slug ? 'page' : undefined}>
+        {label}
+      </a>
+    ))
+  }
+</nav>
+
+<style>
+  .topics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-block-start: var(--space-4);
+  }
+
+  a {
+    padding: 0.3em 0.85em;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: var(--step--1);
+  }
+
+  a:hover {
+    color: var(--text);
+    border-color: var(--text);
+  }
+
+  a[aria-current='page'] {
+    background: var(--text);
+    border-color: var(--text);
+    color: var(--bg);
+  }
+</style>

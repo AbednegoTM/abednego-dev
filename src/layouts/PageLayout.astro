@@ -1,0 +1,43 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { formatDate } from '../lib/content';
+import '../styles/prose.css';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description: string;
+    updated?: string;
+  };
+}
+
+const { title, description, updated } = Astro.props.frontmatter;
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="wrap page">
+    <PageHeader title={title} intro={description}>
+      {
+        updated && (
+          <p class="updated">
+            Last updated <time datetime={updated}>{formatDate(new Date(updated))}</time>
+          </p>
+        )
+      }
+    </PageHeader>
+    <div class="prose">
+      <slot />
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .prose {
+    max-width: var(--measure);
+  }
+
+  .updated {
+    font-size: var(--step--1) !important;
+  }
+</style>

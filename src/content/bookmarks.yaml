@@ -1,0 +1,7 @@
+# Each entry needs a unique id. kind: article | book | tool | music | video
+- id: designing-data-intensive-applications
+  title: Designing Data-Intensive Applications
+  by: Martin Kleppmann
+  url: https://dataintensive.net/
+  kind: book
+  added: 2026-10-01

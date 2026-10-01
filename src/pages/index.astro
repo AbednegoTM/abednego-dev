@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContourStatic from '../components/ContourStatic.astro';
+import EntryList, { type Entry } from '../components/EntryList.astro';
+import { getPublished, SECTION_LABELS, type DatedCollection } from '../lib/content';
+import { frontmatter as now } from './now.mdx';
+
+const sections: DatedCollection[] = ['writing', 'notes', 'projects', 'lab'];
+const recent: Entry[] = (
+  await Promise.all(
+    sections.map(async (section) =>
+      (await getPublished(section)).map(({ id, data }) => ({
+        href: `/${section}/${id}`,
+        title: data.title,
+        description: data.description,
+        date: data.date,
+        kind: SECTION_LABELS[section],
+        transitionName: `${section}-${id}`,
+        draft: data.draft,
+      })),
+    ),
+  )
+)
+  .flat()
+  .sort((a, b) => b.date.valueOf() - a.date.valueOf())
+  .slice(0, 6);
+---
+
+<BaseLayout>
+  <section class="hero">
+    <div class="field">
+      <ContourStatic />
+    </div>
+    <div class="hero-copy wrap">
+      <h1>Abednego Mwanza</h1>
+      <p>
+        I build interfaces, and lately the systems behind them. This is where I write about
+        code, life, and the questions in between.
+      </p>
+    </div>
+  </section>
+
+  <section class="block wrap" aria-labelledby="recent-heading">
+    <h2 id="recent-heading">Recently</h2>
+    <EntryList entries={recent} empty="Nothing published yet." />
+  </section>
+
+  <section class="block now wrap" aria-labelledby="now-heading">
+    <h2 id="now-heading">Now</h2>
+    <p>{now.summary} <a href="/now">More on what I'm doing now</a></p>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    position: relative;
+    display: grid;
+    align-items: end;
+    min-height: min(78dvh, 52rem);
+    overflow: hidden;
+  }
+
+  .field {
+    position: absolute;
+    inset: 0;
+  }
+
+  .hero-copy {
+    position: relative;
+    padding-block: var(--space-6);
+  }
+
+  h1 {
+    font-size: var(--step-hero);
+    font-weight: 750;
+    letter-spacing: -0.045em;
+    line-height: 0.92;
+    max-width: 10ch;
+  }
+
+  .hero-copy p {
+    margin-block-start: var(--space-4);
+    max-width: 38ch;
+    font-size: var(--step-1);
+    color: var(--text-muted);
+    /* Keeps the line legible where it crosses contour lines */
+    background: color-mix(in srgb, var(--bg) 82%, transparent);
+    box-shadow: 0 0 1.5rem 1rem color-mix(in srgb, var(--bg) 82%, transparent);
+  }
+
+  .block {
+    padding-block: var(--space-6) 0;
+  }
+
+  .block h2 {
+    font-size: var(--step-2);
+    margin-block-end: var(--space-4);
+  }
+
+  .now p {
+    max-width: 60ch;
+    font-size: var(--step-1);
+    color: var(--text-muted);
+  }
+
+  .now a {
+    color: var(--text);
+  }
+</style>
