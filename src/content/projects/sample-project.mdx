@@ -6,10 +6,33 @@ stack: [Astro, TypeScript]
 draft: true
 ---
 
+import Story from '../../components/story/Story.astro';
+import Step from '../../components/story/Step.astro';
+
 ## The problem
 
-Describe what you set out to solve.
+Describe what you set out to solve. Regular prose works as usual; reach for a story when the work is a real sequence of steps.
 
-## What I built
+<Story>
+  <Fragment slot="figure">
+    <img data-figure="1" src="https://placehold.co/800x560/d5dbd1/17261f?text=Step+1" alt="Placeholder for step one" width="800" height="560" />
+    <img data-figure="2" src="https://placehold.co/800x560/d5dbd1/17261f?text=Step+2" alt="Placeholder for step two" width="800" height="560" />
+    <img data-figure="3" src="https://placehold.co/800x560/d5dbd1/17261f?text=Step+3" alt="Placeholder for step three" width="800" height="560" />
+  </Fragment>
 
-Walk through the approach. Scroll-storytelling components arrive in Phase 3.
+  <Step n={1} title="Understand the constraints">
+    Each step pairs with the figure that has the matching `data-figure` number. The figure stays pinned while the steps scroll past.
+  </Step>
+
+  <Step n={2} title="Sketch the system">
+    The accent line on the left fills as the reader moves through the steps, like a route on a map.
+  </Step>
+
+  <Step n={3} title="Ship and measure">
+    Without JavaScript, or with reduced motion on, everything still reads in order.
+  </Step>
+</Story>
+
+## What I learned
+
+Wrap up with outcomes and lessons.

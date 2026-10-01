@@ -14,7 +14,7 @@ const path = Astro.url.pathname;
 const isCurrent = (href: string) => path === href || path.startsWith(`${href}/`);
 ---
 
-<header class="site-header wrap">
+<header class="site-header wrap" transition:name="site-header">
   <a class="home" href="/" aria-label="Abednego Mwanza, home">Abednego</a>
   <nav aria-label="Main">
     <ul>

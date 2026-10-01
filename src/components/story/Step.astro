@@ -1,0 +1,76 @@
+---
+interface Props {
+  n: number;
+  title: string;
+}
+
+const { n, title } = Astro.props;
+---
+
+<section class="step" data-step={String(n)}>
+  <span class="marker" aria-hidden="true">{n}</span>
+  <h3>{title}</h3>
+  <div class="content">
+    <slot />
+  </div>
+</section>
+
+<style>
+  .step {
+    position: relative;
+    padding-block: var(--space-4) var(--space-6);
+    color: var(--text-muted);
+    transition: color 300ms var(--ease-out);
+  }
+
+  /* Without the enhanced story every step reads at full strength */
+  :global(.story:not(.is-enhanced)) .step,
+  .step:global(.is-active) {
+    color: var(--text);
+  }
+
+  .marker {
+    position: absolute;
+    inset-inline-start: calc(-1 * var(--space-5) + 0.4rem - 0.7rem + 1px);
+    inset-block-start: var(--space-4);
+    display: grid;
+    place-items: center;
+    inline-size: 1.4rem;
+    block-size: 1.4rem;
+    border: 2px solid var(--line);
+    border-radius: 50%;
+    background: var(--bg);
+    font-size: 0.7rem;
+    font-weight: 700;
+    transition: border-color 300ms var(--ease-out), background 300ms var(--ease-out),
+      color 300ms var(--ease-out);
+  }
+
+  .step:global(.is-active) .marker {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--bg);
+  }
+
+  h3 {
+    font-size: var(--step-2);
+    line-height: 1.4rem;
+  }
+
+  .content {
+    margin-block-start: var(--space-3);
+    font-family: var(--font-prose);
+    font-size: 1.0625rem;
+    line-height: 1.65;
+  }
+
+  .content > :global(* + *) {
+    margin-block-start: 1em;
+  }
+
+  @media (min-width: 64rem) {
+    .step {
+      min-height: 55vh;
+    }
+  }
+</style>
