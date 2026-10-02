@@ -33,7 +33,7 @@ const { title, description, date, updated, minutes, section, aside, tags = [], t
           </span>
         )
       }
-      {minutes && <span>{minutes} min read</span>}
+      {minutes ? <span>{minutes} min read</span> : null}
       {aside && (aside.href ? <a href={aside.href}>{aside.label}</a> : <span>{aside.label}</span>)}
     </aside>
 

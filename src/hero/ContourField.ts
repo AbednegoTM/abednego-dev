@@ -35,6 +35,7 @@ export class ContourField {
   private uniforms: Record<string, WebGLUniformLocation | null> = {};
   private frame = 0;
   private running = false;
+  private lost = false;
   private visible = true;
   private start = performance.now();
   private last = 0;
@@ -117,13 +118,15 @@ export class ContourField {
     // Re-read token colours when the theme toggles
     const theme = new MutationObserver(() => {
       this.colors = { line: cssColor('--sage'), road: cssColor('--dusk') };
-      if (!this.running) this.draw(this.last);
+      if (!this.running && !this.lost) this.draw(this.last);
     });
     theme.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
     this.disposers.push(() => theme.disconnect());
 
+    // Resources are not rebuilt after a restore, so a lost context stays on the static field.
     const onLost = (event: Event) => {
       event.preventDefault();
+      this.lost = true;
       this.stop();
       this.onLost();
     };
@@ -139,7 +142,7 @@ export class ContourField {
     this.canvas.width = width;
     this.canvas.height = height;
     this.gl.viewport(0, 0, width, height);
-    if (!this.running) this.draw(this.last);
+    if (!this.running && !this.lost) this.draw(this.last);
   }
 
   private draw(time: number) {
@@ -178,7 +181,7 @@ export class ContourField {
 
   /** Runs only while on screen and the tab is visible. */
   private sync() {
-    const shouldRun = this.visible && document.visibilityState === 'visible';
+    const shouldRun = !this.lost && this.visible && document.visibilityState === 'visible';
     if (shouldRun && !this.running) {
       this.running = true;
       // Resume from where time stopped instead of jumping ahead

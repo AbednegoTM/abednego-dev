@@ -16,7 +16,14 @@ let generation = 0;
 
 async function run(setup: Setup) {
   const startedOn = generation;
-  const cleanup = await setup();
+  let cleanup: Cleanup | void;
+  try {
+    cleanup = await setup();
+  } catch (error) {
+    // e.g. a lazy chunk that fails to load after a deploy; the page keeps its static fallback
+    console.error(error);
+    return;
+  }
   if (!cleanup) return;
   // An async setup can resolve after the visitor has already navigated away.
   if (startedOn !== generation) cleanup();
