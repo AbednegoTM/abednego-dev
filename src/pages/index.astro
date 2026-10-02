@@ -1,6 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import ContourStatic from '../components/ContourStatic.astro';
+import Hero from '../components/Hero.astro';
 import EntryList, { type Entry } from '../components/EntryList.astro';
 import { getPublished, SECTION_LABELS, type DatedCollection } from '../lib/content';
 import { frontmatter as now } from './now.mdx';
@@ -27,18 +27,13 @@ const recent: Entry[] = (
 ---
 
 <BaseLayout>
-  <section class="hero">
-    <div class="field">
-      <ContourStatic />
-    </div>
-    <div class="hero-copy wrap">
-      <h1>Abednego Mwanza</h1>
-      <p>
-        I build interfaces, and lately the systems behind them. This is where I write about
-        code, life, and the questions in between.
-      </p>
-    </div>
-  </section>
+  <Hero>
+    <h1>Abednego Mwanza</h1>
+    <p class="lede">
+      I build interfaces, and lately the systems behind them. This is where I write about code,
+      life, and the questions in between.
+    </p>
+  </Hero>
 
   <section class="block wrap" aria-labelledby="recent-heading">
     <h2 id="recent-heading">Recently</h2>
@@ -52,24 +47,6 @@ const recent: Entry[] = (
 </BaseLayout>
 
 <style>
-  .hero {
-    position: relative;
-    display: grid;
-    align-items: end;
-    min-height: min(78dvh, 52rem);
-    overflow: hidden;
-  }
-
-  .field {
-    position: absolute;
-    inset: 0;
-  }
-
-  .hero-copy {
-    position: relative;
-    padding-block: var(--space-6);
-  }
-
   h1 {
     font-size: var(--step-hero);
     font-weight: 750;
@@ -78,7 +55,7 @@ const recent: Entry[] = (
     max-width: 10ch;
   }
 
-  .hero-copy p {
+  .lede {
     margin-block-start: var(--space-4);
     max-width: 38ch;
     font-size: var(--step-1);
