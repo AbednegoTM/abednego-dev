@@ -81,7 +81,8 @@ Everything is left-aligned on a single reading column, and structure carries inf
 - **Rows, not cards.** The home page "Recently" list, writing, notes and lab are ruled rows with the date in the rail. Projects are full-width rows with a large cover. A grid of identical rounded cards with soft shadows is the most common generated layout, and it chops content up without saying anything.
 - **Numbers only for real sequences.** Numbered markers appear only in project case-study steps, which really are ordered.
 - **Empty sections give direction.** A section with no entries shows one plain line and a link to the RSS feed, for example "No essays published yet. Follow the RSS feed to hear when it does."
-- **Information architecture.** Writing, notes, projects, lab, bookmarks and about sit in the main nav; now, uses, CV and RSS sit in the footer. Writing is one section with four topics (engineering, life, philosophy and faith, science and the universe), not four separate blogs.
+- **Information architecture.** Writing, notes, projects, lab, bookmarks and about sit in the main nav; now, uses and RSS sit in the footer. The CV page is hidden (`src/pages/_cv.mdx`) until its content is decided; removing the underscore publishes it again. Writing is one section with four topics (engineering, life, philosophy and faith, science and the universe), not four separate blogs.
+- **Mobile menu.** Below 48rem the nav collapses behind a "Menu" button. It opens a panel of large ruled rows, styled like the rest of the site's lists, with the footer links underneath. Its icon is two contour-like strokes that cross into an ✕. Opening moves focus to the first link; Escape, an outside tap or widening the window closes it. Without JavaScript the links show as a plain stacked list.
 
 ## Motion
 
@@ -93,6 +94,7 @@ Boldness is spent once: the hero is the only motion that plays on its own. Every
 | Page crossfade, 260ms | Navigating | Keeps the reader oriented between pages |
 | Title and cover morph | Opening an entry from a list | Shows that the row became the page |
 | Case-study story | Scrolling a project | The figure follows the step being read; the accent "road" fills to show progress |
+| Mobile menu panel, 280ms | Tapping Menu | Shows where the links came from |
 | Colour and underline changes | Hover and focus | Confirms what is interactive |
 
 What was deliberately left out: fade-and-slide-up entrances on every section, hover lifts on every card, a custom cursor, magnetic buttons, and smooth-scroll hijacking. Each is common and reads as generated; together they would compete with the hero.
