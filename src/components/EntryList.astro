@@ -1,0 +1,114 @@
+---
+import { formatDate } from '../lib/content';
+import EmptyState from './EmptyState.astro';
+
+export interface Entry {
+  href: string;
+  title: string;
+  description?: string;
+  date: Date;
+  /** Shown beside the date, e.g. the section or topic. */
+  kind?: string;
+  transitionName?: string;
+  draft?: boolean;
+}
+
+interface Props {
+  entries: Entry[];
+  empty: string;
+}
+
+const { entries, empty } = Astro.props;
+---
+
+{
+  entries.length === 0 ? (
+    <EmptyState>{empty}</EmptyState>
+  ) : (
+    <ol class="entries" role="list">
+      {entries.map((entry) => (
+        <li>
+          <p class="meta">
+            <time datetime={entry.date.toISOString()}>{formatDate(entry.date)}</time>
+            {entry.kind && <span>{entry.kind}</span>}
+          </p>
+          <div class="body">
+            <h3>
+              <a href={entry.href} transition:name={entry.transitionName}>
+                {entry.title}
+              </a>
+              {entry.draft && <span class="draft">Draft</span>}
+            </h3>
+            {entry.description && <p>{entry.description}</p>}
+          </div>
+        </li>
+      ))}
+    </ol>
+  )
+}
+
+<style>
+  .entries {
+    list-style: none;
+    padding: 0;
+  }
+
+  li {
+    display: grid;
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+    border-block-start: 1px solid var(--line);
+  }
+
+  li:last-child {
+    border-block-end: 1px solid var(--line);
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    color: var(--text-muted);
+    font-size: var(--step--1);
+    padding-block-start: 0.3em;
+  }
+
+  h3 {
+    font-size: var(--step-1);
+    font-weight: 600;
+    letter-spacing: -0.015em;
+  }
+
+  h3 a {
+    text-decoration: none;
+  }
+
+  .body p {
+    margin-block-start: var(--space-1);
+    color: var(--text-muted);
+    max-width: 60ch;
+  }
+
+  .draft {
+    margin-inline-start: var(--space-2);
+    padding: 0.1em 0.5em;
+    border: 1px dashed var(--line);
+    border-radius: 4px;
+    font-size: var(--step--1);
+    font-weight: 400;
+    color: var(--text-muted);
+    vertical-align: middle;
+  }
+
+  @media (max-width: 40rem) {
+    li {
+      grid-template-columns: 1fr;
+      gap: var(--space-1);
+    }
+
+    .meta {
+      flex-direction: row;
+      gap: var(--space-3);
+    }
+  }
+</style>

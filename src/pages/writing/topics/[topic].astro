@@ -1,0 +1,33 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import TopicNav from '../../../components/TopicNav.astro';
+import EntryList from '../../../components/EntryList.astro';
+import { getPublished } from '../../../lib/content';
+import { TOPICS, TOPIC_SLUGS, type Topic } from '../../../lib/topics';
+
+export function getStaticPaths() {
+  return TOPIC_SLUGS.map((topic) => ({ params: { topic } }));
+}
+
+const topic = Astro.params.topic as Topic;
+const label = TOPICS[topic];
+const posts = (await getPublished('writing')).filter(({ data }) => data.topic === topic);
+const entries = posts.map(({ id, data }) => ({
+  href: `/writing/${id}`,
+  title: data.title,
+  description: data.description,
+  date: data.date,
+  transitionName: `writing-${id}`,
+  draft: data.draft,
+}));
+---
+
+<BaseLayout title={`${label} | Writing`} description={`Writing about ${label.toLowerCase()}.`}>
+  <div class="wrap">
+    <PageHeader title={label}>
+      <TopicNav current={topic} />
+    </PageHeader>
+    <EntryList entries={entries} empty={`Nothing on ${label.toLowerCase()} yet.`} />
+  </div>
+</BaseLayout>

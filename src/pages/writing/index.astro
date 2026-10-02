@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import TopicNav from '../../components/TopicNav.astro';
+import EntryList from '../../components/EntryList.astro';
+import { getPublished } from '../../lib/content';
+import { TOPICS } from '../../lib/topics';
+
+const posts = await getPublished('writing');
+const entries = posts.map(({ id, data }) => ({
+  href: `/writing/${id}`,
+  title: data.title,
+  description: data.description,
+  date: data.date,
+  kind: TOPICS[data.topic],
+  transitionName: `writing-${id}`,
+  draft: data.draft,
+}));
+---
+
+<BaseLayout title="Writing" description="Essays on engineering, life, philosophy and faith, and science.">
+  <div class="wrap">
+    <PageHeader
+      title="Writing"
+      intro="Longer pieces on engineering, life, philosophy and faith, and the universe we live in."
+    >
+      <TopicNav />
+    </PageHeader>
+    <EntryList entries={entries} empty="No essays published yet." />
+  </div>
+</BaseLayout>

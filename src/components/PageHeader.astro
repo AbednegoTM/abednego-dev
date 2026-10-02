@@ -1,0 +1,32 @@
+---
+interface Props {
+  title: string;
+  intro?: string;
+}
+
+const { title, intro } = Astro.props;
+---
+
+<header class="page-header">
+  <h1>{title}</h1>
+  {intro && <p>{intro}</p>}
+  <slot />
+</header>
+
+<style>
+  .page-header {
+    padding-block: var(--space-6) var(--space-5);
+  }
+
+  h1 {
+    font-size: var(--step-5);
+    letter-spacing: -0.035em;
+  }
+
+  p {
+    margin-block-start: var(--space-3);
+    max-width: 52ch;
+    font-size: var(--step-1);
+    color: var(--text-muted);
+  }
+</style>

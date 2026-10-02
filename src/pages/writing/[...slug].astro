@@ -1,0 +1,29 @@
+---
+import { render } from 'astro:content';
+import ProseLayout from '../../layouts/ProseLayout.astro';
+import { getPublished, readingMinutes } from '../../lib/content';
+import { TOPICS } from '../../lib/topics';
+
+export async function getStaticPaths() {
+  const posts = await getPublished('writing');
+  return posts.map((post) => ({ params: { slug: post.id }, props: { post } }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+const { data } = post;
+---
+
+<ProseLayout
+  title={data.title}
+  description={data.description}
+  date={data.date}
+  updated={data.updated}
+  minutes={readingMinutes(post.body)}
+  section={{ label: 'Writing', href: '/writing' }}
+  aside={{ label: TOPICS[data.topic], href: `/writing/topics/${data.topic}` }}
+  tags={data.tags}
+  transitionName={`writing-${post.id}`}
+>
+  <Content />
+</ProseLayout>

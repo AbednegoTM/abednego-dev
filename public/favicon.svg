@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <style>
+    rect { fill: #17261f; }
+    .l { stroke: #8a9a8c; }
+    .r { stroke: #97a3ff; }
+  </style>
+  <rect width="32" height="32" rx="7"/>
+  <g fill="none" stroke-width="2" stroke-linecap="round">
+    <path class="l" d="M6 11c4-3 7 2 10 0s6-3 10 0"/>
+    <path class="r" d="M6 17c4-3 7 2 10 0s6-3 10 0"/>
+    <path class="l" d="M6 23c4-3 7 2 10 0s6-3 10 0"/>
+  </g>
+</svg>

@@ -1,0 +1,73 @@
+/*
+ * "Contours" design tokens.
+ * Sage is decorative only (lines, rules) — it fails AA for text. Use moss for secondary text.
+ */
+
+:root {
+  color-scheme: light;
+
+  --lichen: #e9ece4;
+  --fog: #d5dbd1;
+  --pine: #17261f;
+  --moss: #4f6055;
+  --sage: #8a9a8c;
+  --dusk: #4453c4;
+
+  --bg: var(--lichen);
+  --surface: var(--fog);
+  --text: var(--pine);
+  --text-muted: var(--moss);
+  --line: var(--sage);
+  --accent: var(--dusk);
+
+  --font-ui: 'Schibsted Grotesk Variable', system-ui, sans-serif;
+  --font-prose: 'Literata Variable', Georgia, serif;
+  --font-code: 'JetBrains Mono Variable', ui-monospace, monospace;
+
+  /* Major-third scale (1.25) */
+  --step--1: 0.8rem;
+  --step-0: 1rem;
+  --step-1: 1.25rem;
+  --step-2: 1.563rem;
+  --step-3: 1.953rem;
+  --step-4: 2.441rem;
+  --step-5: 3.052rem;
+  --step-hero: clamp(3rem, 2rem + 6vw, 7.5rem);
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.5rem;
+  --space-6: 4rem;
+  --space-7: 6rem;
+
+  --measure: 68ch;
+  --page-max: 72rem;
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --rail: 11rem;
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --lichen: #0e1714;
+    --fog: #18241f;
+    --pine: #dce3da;
+    --moss: #93a398;
+    --sage: #4e5f55;
+    --dusk: #97a3ff;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --lichen: #0e1714;
+  --fog: #18241f;
+  --pine: #dce3da;
+  --moss: #93a398;
+  --sage: #4e5f55;
+  --dusk: #97a3ff;
+}

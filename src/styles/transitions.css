@@ -1,0 +1,30 @@
+/*
+ * View transitions: a calm crossfade for the page, with titles and covers morphing
+ * between list and detail (named via transition:name in the components).
+ */
+
+::view-transition-group(*) {
+  animation-duration: 420ms;
+  animation-timing-function: var(--ease-out);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 260ms;
+}
+
+/* Titles change size between list and page; crossfading the text keeps the morph clean */
+::view-transition-old(*),
+::view-transition-new(*) {
+  height: 100%;
+  object-fit: none;
+  object-position: left top;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

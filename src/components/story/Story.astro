@@ -1,0 +1,183 @@
+---
+/**
+ * Scroll story for case studies: a pinned figure on one side, numbered steps on the other.
+ *
+ * <Story>
+ *   <Fragment slot="figure">
+ *     <img data-figure="1" ... />
+ *     <img data-figure="2" ... />
+ *   </Fragment>
+ *   <Step n={1} title="...">...</Step>
+ *   <Step n={2} title="...">...</Step>
+ * </Story>
+ *
+ * Without JS the figures and steps simply stack. With JS the figure pins, swaps to match
+ * the step in view, and an accent "road" fills as the reader moves through the steps.
+ */
+---
+
+<div class="story" data-story>
+  <div class="figure" data-story-figure>
+    <slot name="figure" />
+  </div>
+  <div class="steps" data-story-steps>
+    <div class="road" aria-hidden="true"><span data-story-road></span></div>
+    <slot />
+  </div>
+</div>
+
+<style>
+  .story {
+    display: grid;
+    gap: var(--space-5);
+    margin-block: var(--space-6);
+    font-family: var(--font-ui);
+  }
+
+  .figure {
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .figure > :global(*) {
+    width: 100%;
+    border-radius: 6px;
+  }
+
+  .steps {
+    position: relative;
+    padding-inline-start: var(--space-5);
+  }
+
+  .road {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0.4rem;
+    width: 2px;
+    background: var(--line);
+  }
+
+  .road span {
+    display: block;
+    height: 100%;
+    background: var(--accent);
+    transform-origin: top;
+  }
+
+  /* Enhanced: pinned figure that swaps per step */
+  .story.is-enhanced .figure {
+    position: sticky;
+    top: var(--space-4);
+    align-self: start;
+    grid-template-areas: 'stack';
+  }
+
+  .story.is-enhanced .figure > :global(*) {
+    grid-area: stack;
+    opacity: 0;
+    transition: opacity 400ms var(--ease-out);
+  }
+
+  .story.is-enhanced .figure > :global(.is-active) {
+    opacity: 1;
+  }
+
+  @media (min-width: 64rem) {
+    .story {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      /* Break out of the reading column so figure and steps sit side by side */
+      width: calc(min(100vw, var(--page-max)) - 2 * var(--gutter) - var(--rail) - var(--space-4));
+    }
+
+    .story.is-enhanced .figure {
+      grid-column: 2;
+      grid-row: 1;
+      top: 20vh;
+    }
+
+    .steps {
+      grid-column: 1;
+      grid-row: 1;
+    }
+  }
+
+  @media (max-width: 63.99rem) {
+    .story.is-enhanced .figure {
+      z-index: 1;
+      max-height: 42vh;
+      background: var(--bg);
+      padding-block: var(--space-2);
+    }
+
+    .story.is-enhanced .figure > :global(*) {
+      max-height: calc(42vh - var(--space-4));
+      object-fit: contain;
+    }
+  }
+</style>
+
+<script>
+  import { onPage, prefersReducedMotion } from '../../animations/lifecycle';
+
+  onPage(async () => {
+    const stories = [...document.querySelectorAll<HTMLElement>('[data-story]')];
+    if (stories.length === 0) return;
+
+    const [{ gsap }, { ScrollTrigger }] = await Promise.all([
+      import('gsap'),
+      import('gsap/ScrollTrigger'),
+    ]);
+    gsap.registerPlugin(ScrollTrigger);
+
+    const ctx = gsap.context(() => {
+      for (const story of stories) {
+        const steps = [...story.querySelectorAll<HTMLElement>('[data-step]')];
+        const figures = [...story.querySelectorAll<HTMLElement>('[data-figure]')];
+        const road = story.querySelector<HTMLElement>('[data-story-road]');
+        const stepsEl = story.querySelector<HTMLElement>('[data-story-steps]');
+        if (steps.length === 0) continue;
+
+        const setActive = (n: string) => {
+          for (const step of steps) step.classList.toggle('is-active', step.dataset.step === n);
+          for (const figure of figures) figure.classList.toggle('is-active', figure.dataset.figure === n);
+        };
+
+        story.classList.add('is-enhanced');
+        setActive(steps[0].dataset.step!);
+
+        for (const step of steps) {
+          ScrollTrigger.create({
+            trigger: step,
+            start: 'top 60%',
+            end: 'bottom 60%',
+            onToggle: (self) => self.isActive && setActive(step.dataset.step!),
+          });
+        }
+
+        if (road && stepsEl) {
+          if (prefersReducedMotion()) {
+            gsap.set(road, { scaleY: 1 });
+          } else {
+            gsap.fromTo(
+              road,
+              { scaleY: 0 },
+              {
+                scaleY: 1,
+                ease: 'none',
+                scrollTrigger: { trigger: stepsEl, start: 'top 60%', end: 'bottom 60%', scrub: 0.4 },
+              },
+            );
+          }
+        }
+      }
+    });
+
+    // Late font loads shift layout; recompute trigger positions once they settle.
+    void document.fonts.ready.then(() => ScrollTrigger.refresh());
+
+    return () => {
+      ctx.revert();
+      for (const story of stories) story.classList.remove('is-enhanced');
+    };
+  });
+</script>

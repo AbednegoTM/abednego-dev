@@ -1,0 +1,15 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+---
+
+<BaseLayout title="Page not found">
+  <div class="wrap">
+    <PageHeader
+      title="Off the map"
+      intro="This page doesn't exist, or it moved. Head back to the home page or browse the writing."
+    >
+      <p><a href="/">Go to the home page</a> or <a href="/writing">read the writing</a>.</p>
+    </PageHeader>
+  </div>
+</BaseLayout>

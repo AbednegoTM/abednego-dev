@@ -1,0 +1,97 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import EmptyState from '../components/EmptyState.astro';
+
+const groups = [
+  { kind: 'book', label: 'Books' },
+  { kind: 'article', label: 'Articles' },
+  { kind: 'video', label: 'Talks and videos' },
+  { kind: 'music', label: 'Music' },
+  { kind: 'tool', label: 'Tools' },
+] as const;
+
+const bookmarks = (await getCollection('bookmarks')).sort(
+  (a, b) => b.data.added.valueOf() - a.data.added.valueOf(),
+);
+const grouped = groups
+  .map((group) => ({ ...group, items: bookmarks.filter(({ data }) => data.kind === group.kind) }))
+  .filter((group) => group.items.length > 0);
+const intro = 'Books, articles, talks, music and tools worth your time.';
+---
+
+<BaseLayout title="Bookmarks" description={intro}>
+  <div class="wrap">
+    <PageHeader title="Bookmarks" intro={intro} />
+    {grouped.length === 0 && <EmptyState>No bookmarks yet.</EmptyState>}
+    {
+      grouped.map((group) => (
+        <section class="group" aria-labelledby={`group-${group.kind}`}>
+          <h2 id={`group-${group.kind}`}>{group.label}</h2>
+          <ul role="list">
+            {group.items.map(({ data }) => (
+              <li>
+                <a href={data.url}>{data.title}</a>
+                {data.by && <span class="by">{data.by}</span>}
+                {data.note && <p>{data.note}</p>}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .group {
+    display: grid;
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+    gap: var(--space-4);
+    padding-block: var(--space-4);
+    border-block-start: 1px solid var(--line);
+  }
+
+  .group:last-of-type {
+    border-block-end: 1px solid var(--line);
+  }
+
+  h2 {
+    font-size: var(--step-0);
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--text-muted);
+    padding-block-start: 0.15em;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  li a {
+    font-size: var(--step-1);
+    font-weight: 600;
+  }
+
+  .by {
+    margin-inline-start: var(--space-2);
+    color: var(--text-muted);
+  }
+
+  li p {
+    margin-block-start: var(--space-1);
+    max-width: 60ch;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 40rem) {
+    .group {
+      grid-template-columns: 1fr;
+      gap: var(--space-2);
+    }
+  }
+</style>

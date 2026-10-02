@@ -1,0 +1,112 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+
+const { project } = Astro.props;
+const { id, data } = project;
+---
+
+<li class="project">
+  <a class="link" href={`/projects/${id}`}>
+    <div class="cover" transition:name={`project-cover-${id}`}>
+      {
+        data.cover ? (
+          <Image src={data.cover} alt={data.coverAlt ?? ''} widths={[640, 1200]} sizes="(max-width: 48rem) 100vw, 60vw" />
+        ) : (
+          <div class="placeholder" aria-hidden="true" />
+        )
+      }
+    </div>
+    <div class="text">
+      <h3 transition:name={`projects-${id}`}>
+        {data.title}
+        {data.draft && <span class="draft">Draft</span>}
+      </h3>
+      <p>{data.description}</p>
+      {data.stack.length > 0 && <p class="stack">{data.stack.join(', ')}</p>}
+    </div>
+  </a>
+</li>
+
+<style>
+  .project {
+    border-block-start: 1px solid var(--line);
+    padding-block: var(--space-5);
+  }
+
+  .link {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--space-5);
+    align-items: center;
+    text-decoration: none;
+  }
+
+  .cover {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: 6px;
+    background: var(--surface);
+  }
+
+  .cover :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: scale 600ms var(--ease-out);
+  }
+
+  .link:hover .cover :global(img) {
+    scale: 1.03;
+  }
+
+  .placeholder {
+    width: 100%;
+    height: 100%;
+    background: repeating-radial-gradient(
+      ellipse at 30% 60%,
+      transparent 0 18px,
+      color-mix(in srgb, var(--line) 45%, transparent) 18px 19px
+    );
+  }
+
+  h3 {
+    font-size: var(--step-3);
+    letter-spacing: -0.025em;
+  }
+
+  .link:hover h3 {
+    color: var(--accent);
+  }
+
+  .text p {
+    margin-block-start: var(--space-2);
+    color: var(--text-muted);
+  }
+
+  .stack {
+    font-size: var(--step--1);
+  }
+
+  .draft {
+    margin-inline-start: var(--space-2);
+    padding: 0.1em 0.5em;
+    border: 1px dashed var(--line);
+    border-radius: 4px;
+    font-size: var(--step--1);
+    font-weight: 400;
+    color: var(--text-muted);
+    vertical-align: middle;
+  }
+
+  @media (max-width: 48rem) {
+    .link {
+      grid-template-columns: 1fr;
+      gap: var(--space-3);
+    }
+  }
+</style>
