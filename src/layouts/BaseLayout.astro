@@ -47,6 +47,8 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
                 ? 'dark'
                 : 'light';
           document.documentElement.dataset.theme = theme;
+          // Lets CSS enhance JS-only UI (the mobile menu) without a flash of the fallback
+          document.documentElement.classList.add('js');
         }
         apply();
         document.addEventListener('astro:after-swap', apply);
@@ -65,7 +67,6 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
       <p>
         <a href="/now">Now</a>
         <a href="/uses">Uses</a>
-        <a href="/cv">CV</a>
         <a href="/rss.xml">RSS</a>
       </p>
     </footer>
